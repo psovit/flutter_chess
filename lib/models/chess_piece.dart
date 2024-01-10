@@ -4,7 +4,7 @@ enum PieceColor {
 }
 
 abstract class ChessPiece {
-  final int positionIndex;
+  int positionIndex;
   final String name;
   final String svgPath;
   final PieceColor color;
@@ -15,6 +15,10 @@ abstract class ChessPiece {
     required this.svgPath,
     required this.color,
   });
+
+  void setPosition(int newIndex) {
+    positionIndex = newIndex;
+  }
 }
 
 class Rook extends ChessPiece {
@@ -27,12 +31,21 @@ class Rook extends ChessPiece {
 }
 
 class Pawn extends ChessPiece {
+  bool movedTwoSquares;
   Pawn({
     required super.name,
     required super.svgPath,
     required super.color,
     required super.positionIndex,
+    this.movedTwoSquares = false,
   });
+
+  @override
+  void setPosition(int newIndex) {
+    // 16 for two rows (8 squares each)
+    movedTwoSquares = (newIndex - positionIndex).abs() == 16;
+    super.setPosition(newIndex);
+  }
 }
 
 class Bishop extends ChessPiece {

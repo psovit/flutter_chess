@@ -1,4 +1,4 @@
-import 'package:chess/constants.dart';
+import 'package:chess/blocs/move_hanlder.dart';
 import 'package:chess/models/chess_piece.dart';
 import 'package:flutter/material.dart';
 
@@ -16,8 +16,7 @@ class BoardBloc {
 
   void setAllowedMoves(int selectedItemIndex) {
     final Map<int, ChessPiece> updatedBoard = Map.from(_boardMapPiecesNf.value);
-    final List<int> allowedMoves = List.from(_allowMovesNf.value);
-    allowedMoves.clear();
+
     if (!updatedBoard.containsKey(selectedItemIndex)) {
       return;
     }
@@ -25,21 +24,10 @@ class BoardBloc {
     if (piece.color != _nextMoveNf.value) {
       return;
     }
-    if (piece is Pawn) {
-      if (piece.color == PieceColor.black) {
-        if (piece.positionIndex + 8 > totalSquares) {
-          return;
-        }
-        allowedMoves.add(piece.positionIndex + 8);
-      }
-      if (piece.color == PieceColor.white) {
-        if (piece.positionIndex - 8 < 0) {
-          return;
-        }
-        allowedMoves.add(piece.positionIndex - 8);
-      }
-    }
-
+    final List<int> allowedMoves = MoveHandler.getAllowedMoves(
+      piece,
+      updatedBoard,
+    );
     _allowMovesNf.value = allowedMoves;
   }
 
@@ -75,6 +63,7 @@ class BoardBloc {
     }
     updatedBoard.removeWhere((key, value) => key == curIndex);
     updatedBoard.removeWhere((key, value) => key == newIndex);
+    piece.setPosition(newIndex);
     updatedBoard.putIfAbsent(newIndex, () => piece);
     setBoardState(updatedBoard);
     toggleNextMoveColor();
