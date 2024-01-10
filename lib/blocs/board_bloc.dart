@@ -31,6 +31,7 @@ class BoardBloc {
       return;
     }
     updatedBoard.removeWhere((key, value) => key == curIndex);
+    updatedBoard.removeWhere((key, value) => key == newIndex);
     updatedBoard.putIfAbsent(newIndex, () => piece);
     setBoardState(updatedBoard);
     toggleNextMoveColor();
