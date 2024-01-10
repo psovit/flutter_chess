@@ -1,3 +1,4 @@
+import 'package:chess/blocs/board_bloc.dart';
 import 'package:chess/chess_board.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const ChessBoard(),
+      home: ChessBoard(boardBloc: BoardBloc()),
     );
   }
 }

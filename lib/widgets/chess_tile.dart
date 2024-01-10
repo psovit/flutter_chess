@@ -2,7 +2,7 @@ import 'package:chess/blocs/board_bloc.dart';
 import 'package:chess/constants.dart';
 import 'package:flutter/material.dart';
 
-class ChessTile extends StatefulWidget {
+class ChessTile extends StatelessWidget {
   final int index;
   final bool isLightSquare;
   final Widget? child;
@@ -17,37 +17,38 @@ class ChessTile extends StatefulWidget {
   });
 
   @override
-  State<ChessTile> createState() => _ChessTileState();
-}
-
-class _ChessTileState extends State<ChessTile> {
-  @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: widget.boardBloc.selectedIndexNf,
+      valueListenable: boardBloc.selectedIndexNf,
       builder: (
         _,
-        int index,
+        int curSelectedIndex,
         __,
       ) {
         Color? boardColor =
-            widget.isLightSquare ? Colors.brown[300] : Colors.brown[700];
-        if (index == widget.index) {
+            isLightSquare ? Colors.brown[300] : Colors.brown[700];
+        if (curSelectedIndex == index) {
           boardColor = Colors.blueAccent;
         }
         return GestureDetector(
           onTap: () {
-            if (index == widget.index) {
-              widget.boardBloc.setSelected(-1);
+            if (curSelectedIndex == index) {
+              boardBloc.setSelected(-1);
               return;
             }
-            widget.boardBloc.setSelected(widget.index);
+            boardBloc.setSelected(index);
+
+            if (curSelectedIndex != -1) {
+              boardBloc.movePiece(curSelectedIndex, index);
+              boardBloc.setSelected(-1);
+              return;
+            }
           },
           child: Container(
             color: boardColor,
             height: chessSquareWidth,
             width: chessSquareWidth,
-            child: widget.child,
+            child: child,
           ),
         );
       },
