@@ -19,39 +19,70 @@ class ChessTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
-      valueListenable: boardBloc.selectedIndexNf,
+      valueListenable: boardBloc.allowMovesNf,
       builder: (
         _,
-        int curSelectedIndex,
+        List<int> allowedMoves,
         __,
       ) {
-        Color? boardColor =
-            isLightSquare ? Colors.brown[300] : Colors.brown[700];
-        if (curSelectedIndex == index) {
-          boardColor = Colors.blueAccent;
-        }
-        return GestureDetector(
-          onTap: () {
-            if (curSelectedIndex == index) {
-              boardBloc.setSelected(-1);
-              return;
-            }
-            boardBloc.setSelected(index);
+        return ValueListenableBuilder(
+          valueListenable: boardBloc.selectedIndexNf,
+          builder: (
+            _,
+            int curSelectedIndex,
+            __,
+          ) {
+            return GestureDetector(
+              onTap: () {
+                if (curSelectedIndex == index) {
+                  boardBloc.setSelected(-1);
+                  return;
+                }
+                boardBloc.setSelected(index);
 
-            if (curSelectedIndex != -1) {
-              boardBloc.movePiece(curSelectedIndex, index);
-              boardBloc.setSelected(-1);
-              return;
-            }
+                if (curSelectedIndex != -1) {
+                  boardBloc.movePiece(curSelectedIndex, index);
+                  boardBloc.setSelected(-1);
+                  return;
+                }
+              },
+              child: _getChild(allowedMoves, curSelectedIndex),
+            );
           },
-          child: Container(
-            color: boardColor,
-            height: chessSquareWidth,
-            width: chessSquareWidth,
-            child: child,
-          ),
         );
       },
+    );
+  }
+
+  Widget _getChild(
+    List<int> allowedMoves,
+    int curSelectedIndex,
+  ) {
+    Color? boardColor = isLightSquare ? Colors.brown[300] : Colors.brown[700];
+    if (curSelectedIndex == index) {
+      boardColor = Colors.blueAccent;
+    }
+
+    if (allowedMoves.isNotEmpty && allowedMoves.contains(index)) {
+      return Container(
+        color: boardColor,
+        height: chessSquareWidth,
+        width: chessSquareWidth,
+        child: Container(
+          margin: const EdgeInsets.all(20),
+          constraints: const BoxConstraints(maxHeight: 2, maxWidth: 2),
+          decoration: const BoxDecoration(
+            color: Colors.black12,
+            shape: BoxShape.circle,
+          ),
+        ),
+      );
+    }
+    return Container(
+      color: boardColor,
+      height: chessSquareWidth,
+      width: chessSquareWidth,
+      child: child,
     );
   }
 }

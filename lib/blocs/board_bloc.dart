@@ -1,10 +1,51 @@
+import 'package:chess/constants.dart';
 import 'package:chess/models/chess_piece.dart';
 import 'package:flutter/material.dart';
 
 class BoardBloc {
   void setSelected(int index) {
     _selectedIndexNf.value = index;
+    if (index != -1) {
+      setAllowedMoves(index);
+    } else {
+      final List<int> allowedMoves = List.from(_allowMovesNf.value);
+      allowedMoves.clear();
+      _allowMovesNf.value = allowedMoves;
+    }
   }
+
+  void setAllowedMoves(int selectedItemIndex) {
+    final Map<int, ChessPiece> updatedBoard = Map.from(_boardMapPiecesNf.value);
+    final List<int> allowedMoves = List.from(_allowMovesNf.value);
+    allowedMoves.clear();
+    if (!updatedBoard.containsKey(selectedItemIndex)) {
+      return;
+    }
+    final ChessPiece piece = updatedBoard[selectedItemIndex]!;
+    if (piece.color != _nextMoveNf.value) {
+      return;
+    }
+    if (piece is Pawn) {
+      if (piece.color == PieceColor.black) {
+        if (piece.positionIndex + 8 > totalSquares) {
+          return;
+        }
+        allowedMoves.add(piece.positionIndex + 8);
+      }
+      if (piece.color == PieceColor.white) {
+        if (piece.positionIndex - 8 < 0) {
+          return;
+        }
+        allowedMoves.add(piece.positionIndex - 8);
+      }
+    }
+
+    _allowMovesNf.value = allowedMoves;
+  }
+
+  final ValueNotifier<List<int>> _allowMovesNf = ValueNotifier<List<int>>(
+    <int>[],
+  );
 
   final ValueNotifier<int> _selectedIndexNf = ValueNotifier<int>(-1);
   final ValueNotifier<PieceColor> _nextMoveNf = ValueNotifier<PieceColor>(
@@ -16,6 +57,7 @@ class BoardBloc {
   ValueNotifier<Map<int, ChessPiece>> get boardMapPiecesNf => _boardMapPiecesNf;
   ValueNotifier<int> get selectedIndexNf => _selectedIndexNf;
   ValueNotifier<PieceColor> get nextMoveNf => _nextMoveNf;
+  ValueNotifier<List<int>> get allowMovesNf => _allowMovesNf;
 
   void setBoardState(Map<int, ChessPiece> boardMap) {
     _boardMapPiecesNf.value = boardMap;
@@ -23,7 +65,8 @@ class BoardBloc {
 
   movePiece(int curIndex, int newIndex) {
     final Map<int, ChessPiece> updatedBoard = Map.from(_boardMapPiecesNf.value);
-    if (!updatedBoard.containsKey(curIndex)) {
+    if (!updatedBoard.containsKey(curIndex) ||
+        !_allowMovesNf.value.contains(newIndex)) {
       return;
     }
     final ChessPiece piece = updatedBoard[curIndex]!;
