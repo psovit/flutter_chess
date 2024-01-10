@@ -27,8 +27,20 @@ class BoardBloc {
       return;
     }
     final ChessPiece piece = updatedBoard[curIndex]!;
+    if (piece.color != _nextMoveNf.value) {
+      return;
+    }
     updatedBoard.removeWhere((key, value) => key == curIndex);
     updatedBoard.putIfAbsent(newIndex, () => piece);
     setBoardState(updatedBoard);
+    toggleNextMoveColor();
+  }
+
+  toggleNextMoveColor() {
+    if (_nextMoveNf.value == PieceColor.black) {
+      _nextMoveNf.value = PieceColor.white;
+      return;
+    }
+    _nextMoveNf.value = PieceColor.black;
   }
 }
