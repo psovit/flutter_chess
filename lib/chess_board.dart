@@ -1,5 +1,6 @@
-import 'package:chess/constants.dart';
+import 'package:chess/blocs/board_bloc.dart';
 import 'package:chess/models/chess_piece.dart';
+import 'package:chess/widgets/chess_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -12,6 +13,7 @@ class ChessBoard extends StatefulWidget {
 
 class _ChessBoardState extends State<ChessBoard> {
   final Map<int, ChessPiece> _initialPosition = <int, ChessPiece>{};
+  final BoardBloc _boardBloc = BoardBloc();
 
   @override
   void initState() {
@@ -122,10 +124,10 @@ class _ChessBoardState extends State<ChessBoard> {
       itemBuilder: (context, index) {
         // Determine color of the square
         bool isLightSquare = (index ~/ 8 + index) % 2 == 0;
-        return Container(
-          color: isLightSquare ? Colors.brown[300] : Colors.brown[700],
-          height: chessSquareWidth,
-          width: chessSquareWidth,
+        return ChessTile(
+          boardBloc: _boardBloc,
+          index: index,
+          isLightSquare: isLightSquare,
           child: _getChessPiece(index),
         );
       },
