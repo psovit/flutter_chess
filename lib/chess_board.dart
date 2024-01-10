@@ -131,9 +131,18 @@ class _ChessBoardState extends State<ChessBoard> {
       },
       itemCount: 64,
     );
-    return Container(
-      padding: const EdgeInsets.all(50.0),
-      child: chessGrid,
+    return Scaffold(
+      appBar: AppBar(title: const Text('Chess Board')),
+      body: Column(
+        children: [
+          Container(
+            height: 600,
+            width: 600,
+            padding: const EdgeInsets.all(50.0),
+            child: chessGrid,
+          ),
+        ],
+      ),
     );
   }
 

@@ -1,1 +1,1 @@
-const double chessSquareWidth = 12;
+const double chessSquareWidth = 6;
