@@ -1,121 +1,25 @@
-import 'package:chess/blocs/board_bloc.dart';
-import 'package:chess/models/chess_piece.dart';
-import 'package:chess/widgets/chess_tile.dart';
+import 'package:chess_flutter/blocs/board_bloc.dart';
+import 'package:chess_flutter/models/chess_piece.dart';
+import 'package:chess_flutter/widgets/chess_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:chess/chess.dart' as chess_pkg;
 
 class ChessBoard extends StatefulWidget {
-  const ChessBoard({
-    super.key,
-    required this.boardBloc,
-  });
-  final BoardBloc boardBloc;
+  const ChessBoard({super.key});
 
   @override
   State<ChessBoard> createState() => _ChessBoardState();
 }
 
 class _ChessBoardState extends State<ChessBoard> {
-  final Map<int, ChessPiece> _initialBoard = <int, ChessPiece>{};
+  late BoardBloc _boardBloc;
 
   @override
   void initState() {
     super.initState();
-    _initBoardMap();
-    widget.boardBloc.setBoardState(_initialBoard);
-  }
-
-  void _initPawns(PieceColor pawnColor) {
-    final int startIndex = pawnColor == PieceColor.black ? 8 : 48;
-    final int endIndex = startIndex + 8;
-    for (int i = startIndex; i < endIndex; i++) {
-      _initialBoard.putIfAbsent(
-        i,
-        () => Pawn(
-          positionIndex: i,
-          name: 'Pawn',
-          color: pawnColor,
-          svgPath: pawnColor == PieceColor.black
-              ? 'assets/maestro_bw/bP.svg'
-              : 'assets/maestro_bw/wP.svg',
-        ),
-      );
-    }
-  }
-
-  void _initHeroes(PieceColor color) {
-    final int startIndex = color == PieceColor.black ? 0 : 56;
-    final int endIndex = startIndex + 8;
-    final String svgPref = color == PieceColor.black ? 'b' : 'w';
-
-    for (int i = startIndex; i < endIndex; i++) {
-      if (i == 0 || i == 7 || i == 56 || i == 63) {
-        _initialBoard.putIfAbsent(
-          i,
-          () => Rook(
-            positionIndex: i,
-            name: 'Rook',
-            color: color,
-            svgPath: 'assets/maestro_bw/${svgPref}R.svg',
-          ),
-        );
-      }
-
-      if (i == 1 || i == 6 || i == 57 || i == 62) {
-        _initialBoard.putIfAbsent(
-          i,
-          () => Knight(
-            positionIndex: i,
-            name: 'Knight',
-            color: color,
-            svgPath: 'assets/maestro_bw/${svgPref}N.svg',
-          ),
-        );
-      }
-
-      if (i == 2 || i == 5 || i == 58 || i == 61) {
-        _initialBoard.putIfAbsent(
-          i,
-          () => Bishop(
-            positionIndex: i,
-            name: 'Bishop',
-            color: color,
-            svgPath: 'assets/maestro_bw/${svgPref}B.svg',
-          ),
-        );
-      }
-
-      if (i == 3 || i == 59) {
-        _initialBoard.putIfAbsent(
-          i,
-          () => Queen(
-            positionIndex: i,
-            name: 'Queen',
-            color: color,
-            svgPath: 'assets/maestro_bw/${svgPref}Q.svg',
-          ),
-        );
-      }
-
-      if (i == 4 || i == 60) {
-        _initialBoard.putIfAbsent(
-          i,
-          () => King(
-            positionIndex: i,
-            name: 'King',
-            color: color,
-            svgPath: 'assets/maestro_bw/${svgPref}K.svg',
-          ),
-        );
-      }
-    }
-  }
-
-  void _initBoardMap() {
-    _initPawns(PieceColor.black);
-    _initPawns(PieceColor.white);
-    _initHeroes(PieceColor.black);
-    _initHeroes(PieceColor.white);
+    _boardBloc = BoardBloc(chessGame: chess_pkg.Chess());
+    _boardBloc.setBoardState();
   }
 
   @override
@@ -139,7 +43,7 @@ class _ChessBoardState extends State<ChessBoard> {
     return Column(
       children: [
         ValueListenableBuilder(
-          valueListenable: widget.boardBloc.nextMoveNf,
+          valueListenable: _boardBloc.nextMoveNf,
           builder: (
             _,
             PieceColor nextMove,
@@ -157,7 +61,7 @@ class _ChessBoardState extends State<ChessBoard> {
 
   Widget _chessBoard() {
     return ValueListenableBuilder(
-      valueListenable: widget.boardBloc.boardMapPiecesNf,
+      valueListenable: _boardBloc.boardMapPiecesNf,
       builder: (
         _,
         Map<int, ChessPiece> boardMapPieces,
@@ -179,7 +83,7 @@ class _ChessBoardState extends State<ChessBoard> {
             bool isLightSquare = (index ~/ 8 + index) % 2 == 0;
 
             return ChessTile(
-              boardBloc: widget.boardBloc,
+              boardBloc: _boardBloc,
               index: index,
               isLightSquare: isLightSquare,
               child: child,

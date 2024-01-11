@@ -1,5 +1,5 @@
-import 'package:chess/blocs/board_bloc.dart';
-import 'package:chess/constants.dart';
+import 'package:chess_flutter/blocs/board_bloc.dart';
+import 'package:chess_flutter/constants.dart';
 import 'package:flutter/material.dart';
 
 class ChessTile extends StatelessWidget {

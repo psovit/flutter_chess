@@ -31,21 +31,12 @@ class Rook extends ChessPiece {
 }
 
 class Pawn extends ChessPiece {
-  bool movedTwoSquares;
   Pawn({
     required super.name,
     required super.svgPath,
     required super.color,
     required super.positionIndex,
-    this.movedTwoSquares = false,
   });
-
-  @override
-  void setPosition(int newIndex) {
-    // 16 for two rows (8 squares each)
-    movedTwoSquares = (newIndex - positionIndex).abs() == 16;
-    super.setPosition(newIndex);
-  }
 }
 
 class Bishop extends ChessPiece {
