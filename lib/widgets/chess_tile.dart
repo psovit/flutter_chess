@@ -1,5 +1,6 @@
 import 'package:chess_flutter/blocs/board_bloc.dart';
 import 'package:chess_flutter/constants.dart';
+import 'package:chess_flutter/models/chess_piece.dart';
 import 'package:flutter/material.dart';
 
 class ChessTile extends StatelessWidget {
@@ -64,19 +65,29 @@ class ChessTile extends StatelessWidget {
     }
 
     if (allowedMoves.isNotEmpty && allowedMoves.contains(index)) {
-      return Container(
-        color: boardColor,
-        height: chessSquareWidth,
-        width: chessSquareWidth,
-        child: Container(
-          margin: const EdgeInsets.all(20),
-          constraints: const BoxConstraints(maxHeight: 2, maxWidth: 2),
-          decoration: const BoxDecoration(
-            color: Colors.black12,
-            shape: BoxShape.circle,
+      final ChessPiece? piece = boardBloc.getPieceInPosition(index);
+      if (piece == null) {
+        return Container(
+          color: boardColor,
+          height: chessSquareWidth,
+          width: chessSquareWidth,
+          child: Container(
+            margin: const EdgeInsets.all(20),
+            constraints: const BoxConstraints(maxHeight: 2, maxWidth: 2),
+            decoration: const BoxDecoration(
+              color: Colors.black12,
+              shape: BoxShape.circle,
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        return Container(
+          color: Colors.greenAccent,
+          height: chessSquareWidth,
+          width: chessSquareWidth,
+          child: child,
+        );
+      }
     }
     return Container(
       color: boardColor,

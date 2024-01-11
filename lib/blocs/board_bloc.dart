@@ -18,6 +18,13 @@ class BoardBloc {
     }
   }
 
+  ChessPiece? getPieceInPosition(int index) {
+    if (_boardMapPiecesNf.value.containsKey(index)) {
+      return _boardMapPiecesNf.value[index];
+    }
+    return null;
+  }
+
   void setAllowedMoves(int selectedItemIndex) {
     final Map<int, ChessPiece> updatedBoard = Map.from(_boardMapPiecesNf.value);
 
